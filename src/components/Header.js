@@ -1,37 +1,43 @@
-import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
+import { useState } from "react";
+import { FiMenu, FiX } from "react-icons/fi"; // Mobile icons
+import { signIn, signOut, useSession } from "next-auth/react";
 
 export default function Header() {
   const { data: session } = useSession();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="bg-blue-600 text-white p-4 flex justify-between">
-      <h1 className="text-xl font-bold">
+    <header>
+      <h1>
         <Link href="/">Kittokatsu</Link>
       </h1>
+
+      {/* Desktop Navigation */}
       <nav>
-        <Link href="/vocabulary" className="mr-4">
-          Vocabulary
-        </Link>
-        <Link href="/quiz" className="mr-4">
-          Quiz
-        </Link>
+        <Link href="/vocabulary">Vocabulary</Link>
+        <Link href="/quiz">Quiz</Link>
         <Link href="/leaderboard">Leaderboard</Link>
       </nav>
+
+      {/* Mobile Menu */}
+      <button onClick={() => setMenuOpen(!menuOpen)}>
+        {menuOpen ? <FiX /> : <FiMenu />}
+      </button>
+
+      {menuOpen && (
+        <div className="mobile-menu">
+          <Link href="/vocabulary">Vocabulary</Link>
+          <Link href="/quiz">Quiz</Link>
+          <Link href="/leaderboard">Leaderboard</Link>
+        </div>
+      )}
+
+      {/* Login/Logout */}
       {session ? (
-        <button
-          onClick={() => signOut()}
-          className="bg-red-500 px-3 py-1 rounded"
-        >
-          Logout
-        </button>
+        <button onClick={() => signOut()}>Logout</button>
       ) : (
-        <button
-          onClick={() => signIn("facebook")}
-          className="bg-green-500 px-3 py-1 rounded"
-        >
-          Login with Facebook
-        </button>
+        <button onClick={() => signIn("facebook")}>Login with Facebook</button>
       )}
     </header>
   );
